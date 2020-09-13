@@ -22,12 +22,23 @@ class Layer:
     """
     A single layer within the network that contains its own nodes
     """
-    def __init__(self, nodesList):
+    def __init__(self, nodesList : list):
         self.nodesList = nodesList
+        self.length = len(nodesList)
+    def nodeAt(self, j):
+        return self.nodesList[j]
 
 class Network:
     """
     The neural network itself, containing individual layers that contain individual nodes
     """
-    def __init__(self, layersList):
+    def __init__(self, layersList : list):
         self.layersList = layersList
+        self.weights = {}
+        for l in range(1, len(layersList)):
+            currentLayer = self.layersList[l]
+            previousLayer = self.layersList[l-1]
+            self.weights[l] = {}
+            for j in range(0, currentLayer.length):
+                for k in range(0, previousLayer.length):
+                    self.weights[l][(k, j)] = random.random() * 2 - 1
