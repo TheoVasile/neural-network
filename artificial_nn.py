@@ -8,3 +8,7 @@ class Node:
 class Layer:
     def __init__(self, nodesList):
         self.nodesList = nodesList
+
+class Network:
+    def __init__(self, layersList):
+        self.layersList = layersList
