@@ -22,9 +22,9 @@ class Layer:
     """
     A single layer within the network that contains its own nodes
     """
-    def __init__(self, nodesList : list):
-        self.nodesList = nodesList
-        self.length = len(nodesList)
+    def __init__(self, nodesLength : int):
+        self.nodesList = [Node() for node in range(0, nodesLength)]
+        self.length = nodesLength
     def nodeAt(self, j):
         return self.nodesList[j]
 
@@ -42,3 +42,6 @@ class Network:
             for j in range(0, currentLayer.length):
                 for k in range(0, previousLayer.length):
                     self.weights[l][(k, j)] = random.random() * 2 - 1
+        print(self.weights)
+
+Network([Layer(3), Layer(2), Layer(3)])
