@@ -29,9 +29,15 @@ class Layer:
         return self.nodesList[j]
     def values(self):
         """
-        return all the node values in the list
+        Return all the node values in the list
         """
         return [node.value for node in self.nodesList]
+    def resetValues(self):
+        """
+        Set all the values in the layer to 0
+        """
+        for node in self.nodesList:
+            node.value = 0
 
 class Network:
     """
