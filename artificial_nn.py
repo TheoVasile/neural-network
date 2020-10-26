@@ -27,6 +27,11 @@ class Layer:
         self.length = nodesLength
     def nodeAt(self, j):
         return self.nodesList[j]
+    def values(self):
+        """
+        return all the node values in the list
+        """
+        return [node.value for node in self.nodesList]
 
 class Network:
     """
@@ -39,9 +44,32 @@ class Network:
             currentLayer = self.layersList[l]
             previousLayer = self.layersList[l-1]
             self.weights[l] = {}
-            for j in range(0, currentLayer.length):
+            for j in range(currentLayer.length):
                 for k in range(0, previousLayer.length):
                     self.weights[l][(k, j)] = random.random() * 2 - 1
         print(self.weights)
+    def feedForward(self, inputValues):
+        """
+        return the output of the neural network based on a specified input
+        """
+        for i in range(self.layersList[0].length):
+            self.layersList[0].nodeAt(i).value = inputValues[i]
 
-Network([Layer(3), Layer(2), Layer(3)])
+        for l in range(1, len(self.layersList)):
+            currentLayer = self.layersList[l]
+            previousLayer = self.layersList[l - 1]
+            for j in range(currentLayer.length):
+                currentNode = currentLayer.nodeAt(j)
+                for k in range(previousLayer.length):
+                    previousNode = previousLayer.nodeAt(k)
+                    currentNode.value += previousNode.value * self.weights[l][(k, j)]
+                    previousNode.value = 0
+                currentNode.value += currentNode.bias
+                currentNode.value = sigmoid(currentNode.value)
+
+        return self.layersList[-1]
+
+
+
+neuralNet = Network([Layer(3), Layer(2), Layer(3)])
+print(neuralNet.feedForward([3, 2, 4]).values())
