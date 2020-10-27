@@ -10,6 +10,19 @@ def sigmoid(z):
     """
     return math.sqrt(1 / (1 + math.e ** (-z)))
 
+def test(iterations):
+    """
+    prints neural net output for a set amount of iterations. The neural net
+    should take in 2 inputs (1 or 0), and is expected to return 1 if they are the same, or 0 if
+    they are different. The neural network should learn this pattern
+    """
+    net = Network([Layer(2), Layer(3), Layer(1)])
+    for x in range(iterations):
+        input = [random.randint(0, 1), random.randint(0, 1)]
+        output = [int(input[0] == input[1])]
+        print(net.feedForward(input).values(), output)
+        net.backPropogate(output)
+
 class Node:
     """
     A single node within the network
@@ -102,8 +115,4 @@ class Network:
                 nextNode.bias -= derivatives[l - 1][k]
         print(derivatives)
 
-
-
-neuralNet = Network([Layer(3), Layer(2), Layer(3)])
-neuralNet.feedForward([1, 2, 3])
-neuralNet.backPropogate([3, 2, 4])
+test(100)
