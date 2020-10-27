@@ -69,13 +69,41 @@ class Network:
                 for k in range(previousLayer.length):
                     previousNode = previousLayer.nodeAt(k)
                     currentNode.value += previousNode.value * self.weights[l][(k, j)]
-                    previousNode.value = 0
                 currentNode.value += currentNode.bias
                 currentNode.value = sigmoid(currentNode.value)
 
         return self.layersList[-1]
+    def backPropogate(self, outputValues):
+        derivatives = {}
+        derivatives[len(self.layersList) - 1] = {}
+
+        #iterate backwards through layers
+        for l in range(len(self.layersList) - 1, 0, -1):
+            currentLayer = self.layersList[l]
+            nextLayer = self.layersList[l - 1]
+            derivatives[l-1] = {}
+
+            #iterate through the nodes in the layer behind the current layer
+            for k in range(self.layersList[l - 1].length):
+                nextNode = nextLayer.nodeAt(k)
+                derivatives[l - 1][k] = 0
+
+                #iterate through the nodes in the current layer
+                for j in range(self.layersList[l].length):
+                    currentNode = currentLayer.nodeAt(j)
+
+                    if l == len(self.layersList) - 1:
+                        derivatives[l][j] = -2 * (outputValues[j] - currentNode.value) * currentNode.value * (1 - currentNode.value)
+                        currentNode.bias -= derivatives[l][j]
+                    derivatives[l - 1][k] += derivatives[l][j] * self.weights[l][(k, j)] * nextNode.value * (1 - nextNode.value)
+
+                    self.weights[l][(k, j)] -= derivatives[l][j] * nextNode.value
+
+                nextNode.bias -= derivatives[l - 1][k]
+        print(derivatives)
 
 
 
 neuralNet = Network([Layer(3), Layer(2), Layer(3)])
-print(neuralNet.feedForward([3, 2, 4]).values())
+neuralNet.feedForward([1, 2, 3])
+neuralNet.backPropogate([3, 2, 4])
