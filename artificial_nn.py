@@ -57,9 +57,10 @@ class Network:
     The neural network itself, containing individual layers that contain individual nodes
     """
     def __init__(self, layersList : list):
+        self.learningRate = 0.001
         self.layersList = layersList
         self.weights = {}
-        for l in range(1, len(layersList)):
+        for l in range(0, len(layersList)):
             currentLayer = self.layersList[l]
             previousLayer = self.layersList[l-1]
             self.weights[l] = {}
@@ -100,6 +101,7 @@ class Network:
             for k in range(self.layersList[l - 1].length):
                 nextNode = nextLayer.nodeAt(k)
                 derivatives[l - 1][k] = 0
+                print(f"a[{l-1}][{k}] = {nextNode.value}")
 
                 #iterate through the nodes in the current layer
                 for j in range(self.layersList[l].length):
@@ -107,12 +109,17 @@ class Network:
 
                     if l == len(self.layersList) - 1:
                         derivatives[l][j] = -2 * (outputValues[j] - currentNode.value) * currentNode.value * (1 - currentNode.value)
-                        currentNode.bias -= derivatives[l][j]
+                        print(f"    d[{l}][{j}] = -2 * (t[{j}] - a[{l}][{j}]) * a[{l}][{j}] * (1 - a[{l}][{j}])")
+                        currentNode.bias -= self.learningRate * derivatives[l][j]
+                        print(f"    b[{l}][{j}] -= n * d[{l}][{j}]")
                     derivatives[l - 1][k] += derivatives[l][j] * self.weights[l][(k, j)] * nextNode.value * (1 - nextNode.value)
 
-                    self.weights[l][(k, j)] -= derivatives[l][j] * nextNode.value
+                    print(f"    d[{l-1}][{k}] += d[{l}][{j}] * w[{l}][({k},{j})] * a[{l-1}][{k}] * (1 - a[{l-1}][{k}]) = {derivatives[l][j] * self.weights[l][(k, j)] * nextNode.value * (1 - nextNode.value)}")
+                    self.weights[l][(k, j)] -= self.learningRate * derivatives[l][j] * nextNode.value
+                    print(f"    w[{l}][({k},{j})] -= n * d[{l}][{j}] * a[{l-1}][{k}]")
 
-                nextNode.bias -= derivatives[l - 1][k]
+                nextNode.bias -= self.learningRate * derivatives[l - 1][k]
+                print(f"b[{l - 1}][{k}] -= n * d[{l - 1}][{k}]")
         print(derivatives)
 
-test(100)
+test(1)
