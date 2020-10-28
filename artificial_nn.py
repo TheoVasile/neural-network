@@ -73,7 +73,10 @@ class Network:
         return the output of the neural network based on a specified input
         """
         for i in range(self.layersList[0].length):
-            self.layersList[0].nodeAt(i).value = inputValues[i]
+            node = self.layersList[0].nodeAt(i)
+            node.value = inputValues[i]
+            node.value += node.bias
+            node.value = sigmoid(node.value)
 
         for l in range(1, len(self.layersList)):
             currentLayer = self.layersList[l]
