@@ -2,6 +2,7 @@ import pygame as pg
 from artificial_nn import Network, Layer
 import random
 from typing import List
+from PIL import Image
 
 W = 200
 H = 200
@@ -30,7 +31,30 @@ def display(pixels: List[float], side_length: int, rgb: bool = True) -> None:
         pg.draw.rect(screen, color, (int(x * n), int(y * n), n, n), 0)
 
 
-network = Network([Layer(10), Layer(100), Layer(1024)])
+def learn() -> List[float]:
+    """
+    Pass in an image as an output, run it through the network and reduce the
+    dimensions, before increasing it back to the original size. Backpropagate
+    using the input image as reference to adjust the network weights and biases
+    """
+    choice = random.randint(1, 4601)
+    img = Image.open(f"face_training_set/{choice}.png")
+    img = list(img.getdata())
+    input_ = []
+    for i in img:
+        if type(i) == int:
+            i = [i, i, i]
+        input_.extend([i[0]/255, i[1]/255, i[2]/255])
+
+    screen.fill([0, 0, 0])
+    output_ = network.feed_forward(input_).values()
+    network.back_propagate(input_)
+
+    pg.image.save(screen, "test.png")
+    return output_
+
+
+network = Network([Layer(3072), Layer(100), Layer(10), Layer(100), Layer(3072)])
 running = True
 while running:
     for event in pg.event.get():
@@ -40,7 +64,7 @@ while running:
     screen.fill((0, 0, 0))
 
     inputs = [random.random() for x in range(10)]
-    output = network.feed_forward(inputs).values()
+    output = learn()
     display(output, 32)
 
     pg.display.update()
