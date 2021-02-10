@@ -3,6 +3,7 @@ from artificial_nn import Network, Layer
 import random
 from typing import List
 from PIL import Image
+import pickle
 
 W = 200
 H = 200
@@ -52,6 +53,23 @@ def learn() -> List[float]:
 
     pg.image.save(screen, "test.png")
     return output_
+
+
+def save(file_name: str) -> None:
+    """
+    Save the neural network as a file, with all its weights and biases intact
+    """
+    with open(f"{file_name}.pkl", "wb") as file:
+        pickle.dump(network, file, pickle.HIGHEST_PROTOCOL)
+
+
+def load(file_name: str) -> Network:
+    """
+    Load the neural network from a file, with all its weights and biases intact
+    """
+    with open(f"{file_name}.pkl", "rb") as file:
+        network_ = pickle.load(file)
+        return network_
 
 
 network = Network([Layer(3072), Layer(100), Layer(10), Layer(100), Layer(3072)])
