@@ -41,7 +41,7 @@ while running:
 
     inputs = [random.random() for x in range(10)]
     output = network.feed_forward(inputs).values()
-    display(output, 32,)
+    display(output, 32)
 
     pg.display.update()
     clock.tick(fps)
