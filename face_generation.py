@@ -72,16 +72,16 @@ def load(file_name: str) -> Network:
         return network_
 
 
-network = Network([Layer(3072), Layer(100), Layer(10), Layer(100), Layer(3072)])
+network = load("face_gen")
 running = True
 while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
+            save("face_gen")
             running = False
 
     screen.fill((0, 0, 0))
 
-    inputs = [random.random() for x in range(10)]
     output = learn()
     display(output, 32)
 

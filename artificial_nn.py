@@ -170,3 +170,12 @@ class Network:
                                                        j] * next_node.value
 
                 next_node.bias -= self.learning_rate * derivatives[layer - 1][k]
+
+
+class PCA:
+    """
+    Principal Component Analysis reduces the dimensionality of large pieces of
+    data
+    """
+    def __init__(self):
+        pass
