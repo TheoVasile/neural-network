@@ -172,12 +172,26 @@ class Network:
                 next_node.bias -= self.learning_rate * derivatives[layer - 1][k]
 
 
+class Matrix:
+    """
+    An implementation of a matrix from using the built in data types
+
+    === Attributes ===
+    data: the elements inside the matrix
+    """
+    # attribute types
+    data: List[List[float]]
+
+    def __init__(self, data: List[List[float]]):
+        self.data = data
+
+
 class PCA:
     """
     Principal Component Analysis reduces the dimensionality of large pieces of
     data.
     Most of the mathematics involve matrix calculations, but for the sake of
-    better understanding the underlying maths, no matrix's will be used.
+    better understanding the underlying maths, no built in matrixes will be used
 
     === Attributes ===
     data: the input data, taking the form of a series of lists, with each value
