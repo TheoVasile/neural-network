@@ -175,7 +175,39 @@ class Network:
 class PCA:
     """
     Principal Component Analysis reduces the dimensionality of large pieces of
-    data
+    data.
+    Most of the mathematics involve matrix calculations, but for the sake of
+    better understanding the underlying maths, no matrix's will be used.
+
+    === Attributes ===
+    data: the input data, taking the form of a series of lists, with each value
+    being on its own axis
+    principle_components: the amount of dimensions to reduce the input data to
     """
-    def __init__(self):
-        pass
+    # attribute types
+    data: List[List[float]]
+    principle_components: int
+
+    def __init__(self, data: List[List[float]], principle_components: int):
+        """
+        Initialize attributes
+        """
+        self.data = data
+        self.principle_components = principle_components
+
+    def covariance(self, matrix: List[List[float]]) -> List[List[float]]:
+        """
+        Returns the covariance matrix of a data set
+        """
+        covariance_matrix = []
+        for y in range(len(matrix)):
+            covariance_matrix.append([])
+            for x in range(len(matrix)):
+                covariance_ = 0
+                for i in range(len(matrix[0])):
+                    covariance_ += (matrix[x][i]) * (matrix[y][i])
+                covariance_ /= len(matrix[0]) - 1
+
+                covariance_matrix[y].append(covariance_)
+
+        return covariance_matrix
