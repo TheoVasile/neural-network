@@ -2,6 +2,7 @@ from typing import List, Dict, Tuple
 import random
 import math
 import doctest
+import sympy
 
 VARIABILITY = 2
 
@@ -178,7 +179,8 @@ class Matrix:
     An implementation of a matrix using the built in data types
 
     === Attributes ===
-    data: the elements inside the matrix
+    rows: a list of rows in the matrix
+    columns: a list of columns in the matrix
     """
     # attribute types
     rows: List[List[float]]
@@ -188,7 +190,7 @@ class Matrix:
         self.rows = data
         self.columns = [[row[column] for row in data] for column in range(len(data[0]))]
 
-    def insert(self, row: List[float]):
+    def insert(self, row: List[float]) -> None:
         """
         Insert a new <row> into the matrix
 
@@ -203,7 +205,7 @@ class Matrix:
         for column in range(len(row)):
             self.columns[column].append(row[column])
 
-    def remove_row(self, row: int):
+    def remove_row(self, row: int) -> None:
         """
         Remove a <row> from the matrix
 
@@ -217,9 +219,9 @@ class Matrix:
         for column in range(len(self.columns)):
             self.columns[column].pop(row)
         self.rows.pop(row)
-    def remove_column(self, column: int):
+    def remove_column(self, column: int) -> None:
         """
-        Remove a <row> from the matrix
+        Remove a <column> from the matrix
 
         >>> matrix = Matrix([[1, 2], [5, 1], [3, 4]])
         >>> matrix.remove_column(1)
@@ -252,6 +254,29 @@ class Matrix:
         """
         return self.rows[row][column]
 
+    def covariance(self):
+        """
+        Returns the covariance matrix of a data set
+
+        >>> matrix = Matrix([[1, 2, 3], [2, 6, 1]])
+        >>> matrix = matrix.covariance()
+        >>> matrix.rows
+        [[0.25, 1.0, -0.5], [1.0, 4.0, -2.0], [-0.5, -2.0, 1.0]]
+        """
+        covariance_matrix = Matrix([[0] * len(self.rows[0])])
+        for y in range(len(self.rows[0])):
+            row = []
+            for x in range(len(self.rows[0])):
+                covariance_ = 0
+                for i in range(len(self.columns[0])):
+                    covariance_ += (self.get(x, i) - self.mean(x)) * (self.get(y, i) - self.mean(y))
+                covariance_ /= len(self.columns) - 1
+                row.append(covariance_)
+            covariance_matrix.insert(row)
+        covariance_matrix.remove_row(0)
+
+        return covariance_matrix
+
 
 class PCA:
     """
@@ -275,30 +300,6 @@ class PCA:
         """
         self.data = Matrix(data)
         self.principle_components = principle_components
-
-    def covariance(self, matrix: Matrix) -> Matrix:
-        """
-        Returns the covariance matrix of a data set
-
-        >>> matrix = Matrix([[1, 2, 3], [2, 6, 1]])
-        >>> pca = PCA([[]], 0)
-        >>> cov = pca.covariance(matrix)
-        >>> cov.rows
-        [[0.25, 1.0, -0.5], [1.0, 4.0, -2.0], [-0.5, -2.0, 1.0]]
-        """
-        covariance_matrix = Matrix([[0] * len(matrix.rows[0])])
-        for y in range(len(matrix.rows[0])):
-            row = []
-            for x in range(len(matrix.rows[0])):
-                covariance_ = 0
-                for i in range(len(matrix.columns[0])):
-                    covariance_ += (matrix.get(x, i) - matrix.mean(x)) * (matrix.get(y, i) - matrix.mean(y))
-                covariance_ /= len(matrix.columns) - 1
-                row.append(covariance_)
-            covariance_matrix.insert(row)
-        covariance_matrix.remove_row(0)
-
-        return covariance_matrix
 
 if __name__ == "__main__":
     doctest.testmod()
