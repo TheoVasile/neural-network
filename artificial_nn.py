@@ -327,6 +327,21 @@ class PCA:
         """
         self.data = Matrix(data)
         self.principle_components = principle_components
+    def eigen_values(self):
+        """
+        return the eigenvalues of the data set
+
+        >>> pca = PCA([[90, 60, 90], [90, 90, 30], [60, 60, 60], [60, 60, 90], [30, 30, 30]], 5)
+        >>> pca.eigen_values()
+        [44.81966, 629.11039, 910.06995]
+        """
+        covariance_matrix = self.data.covariance()
+        lambda_ = sympy.Symbol('l')
+        for x in range(len(covariance_matrix.rows[0])):
+            covariance_matrix.rows[x][x] = covariance_matrix.rows[x][x] - lambda_
+        determinant = covariance_matrix.determinant(covariance_matrix)
+        values = sympy.solve(determinant, lambda_)
+        return values
 
 
 if __name__ == "__main__":
