@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 import random
 import math
 import doctest
@@ -184,15 +184,15 @@ class Matrix:
     columns: a list of columns in the matrix
     """
     # attribute types
-    rows: List[List[float]]
-    columns: List[List[float]]
+    rows: List[List[Any]]
+    columns: List[List[Any]]
 
-    def __init__(self, rows: List[List[float]]):
+    def __init__(self, rows: List[List[Any]]):
         self.rows = rows
         self.columns = [[row[column] for row in rows] for column in
                         range(len(rows[0]))]
 
-    def insert(self, row: List[float]) -> None:
+    def insert(self, row: List[Any]) -> None:
         """
         Insert a new <row> into the matrix
 
@@ -273,7 +273,7 @@ class Matrix:
                 covariance_ = 0
                 for i in range(len(self.columns[0])):
                     covariance_ += (self.get(x, i) - self.mean(x)) * (
-                                self.get(y, i) - self.mean(y))
+                            self.get(y, i) - self.mean(y))
                 covariance_ /= len(self.columns) - 1
                 row.append(covariance_)
             covariance_matrix.insert(row)
