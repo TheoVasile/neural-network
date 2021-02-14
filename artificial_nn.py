@@ -174,16 +174,29 @@ class Network:
 
 class Matrix:
     """
-    An implementation of a matrix from using the built in data types
+    An implementation of a matrix using the built in data types
 
     === Attributes ===
     data: the elements inside the matrix
     """
     # attribute types
-    data: List[List[float]]
+    rows: List[List[float]]
+    columns: List[List[float]]
 
     def __init__(self, data: List[List[float]]):
-        self.data = data
+        self.rows = data
+        self.columns = [[row[column] for row in data] for column in range(len(data[0]))]
+
+    def insert(self, row: List[float]):
+        self.rows.append(row)
+        for column in range(len(row)):
+            self.columns[column].append(row[column])
+
+    def mean(self, column: int) -> float:
+        return sum(self.columns[column]) / len(self.columns[column])
+
+    def get(self, column: int, row: int) -> float:
+        return self.rows[row][column]
 
 
 class PCA:
@@ -199,29 +212,29 @@ class PCA:
     principle_components: the amount of dimensions to reduce the input data to
     """
     # attribute types
-    data: List[List[float]]
+    data: Matrix
     principle_components: int
 
     def __init__(self, data: List[List[float]], principle_components: int):
         """
         Initialize attributes
         """
-        self.data = data
+        self.data = Matrix(data)
         self.principle_components = principle_components
 
-    def covariance(self, matrix: List[List[float]]) -> List[List[float]]:
+    def covariance(self, matrix: Matrix) -> Matrix:
         """
         Returns the covariance matrix of a data set
         """
-        covariance_matrix = []
-        for y in range(len(matrix)):
-            covariance_matrix.append([])
-            for x in range(len(matrix)):
+        covariance_matrix = Matrix([[]])
+        for y in range(len(matrix.rows)):
+            row = []
+            for x in range(len(matrix.rows)):
                 covariance_ = 0
-                for i in range(len(matrix[0])):
-                    covariance_ += (matrix[x][i]) * (matrix[y][i])
-                covariance_ /= len(matrix[0]) - 1
-
-                covariance_matrix[y].append(covariance_)
+                for i in range(len(matrix.columns)):
+                    covariance_ += (matrix.get(x, i) - matrix.mean(x)) * (matrix.get(y, i) - matrix.mean(y))
+                covariance_ /= len(matrix.columns) - 1
+                row.append(covariance_)
+            covariance_matrix.insert(row)
 
         return covariance_matrix
