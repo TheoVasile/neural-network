@@ -6,6 +6,7 @@ import sympy
 
 VARIABILITY = 2
 
+
 def sigmoid(z):
     """
     Returns the input number z after performing a sigmoid operation on it
@@ -186,9 +187,10 @@ class Matrix:
     rows: List[List[float]]
     columns: List[List[float]]
 
-    def __init__(self, data: List[List[float]]):
-        self.rows = data
-        self.columns = [[row[column] for row in data] for column in range(len(data[0]))]
+    def __init__(self, rows: List[List[float]]):
+        self.rows = rows
+        self.columns = [[row[column] for row in rows] for column in
+                        range(len(rows[0]))]
 
     def insert(self, row: List[float]) -> None:
         """
@@ -219,6 +221,7 @@ class Matrix:
         for column in range(len(self.columns)):
             self.columns[column].pop(row)
         self.rows.pop(row)
+
     def remove_column(self, column: int) -> None:
         """
         Remove a <column> from the matrix
@@ -269,13 +272,37 @@ class Matrix:
             for x in range(len(self.rows[0])):
                 covariance_ = 0
                 for i in range(len(self.columns[0])):
-                    covariance_ += (self.get(x, i) - self.mean(x)) * (self.get(y, i) - self.mean(y))
+                    covariance_ += (self.get(x, i) - self.mean(x)) * (
+                                self.get(y, i) - self.mean(y))
                 covariance_ /= len(self.columns) - 1
                 row.append(covariance_)
             covariance_matrix.insert(row)
         covariance_matrix.remove_row(0)
 
         return covariance_matrix
+
+    def determinant(self, matrix):
+        """
+        Return the determinant of a matrix
+
+        >>> matrix = Matrix([[6, 1, 1], [4, -2, 5], [2, 8, 7]])
+        >>> matrix.determinant(matrix)
+        -306
+        """
+        if len(matrix.columns) > 2:
+            value = 0
+            for column in range(len(matrix.columns)):
+                m = matrix.rows.copy()
+                for i in range(len(m)):
+                    m[i] = m[i].copy()
+                m = Matrix(m)
+                m.remove_column(column)
+                m.remove_row(0)
+                value += (matrix.get(column, 0) * m.determinant(m)) * \
+                         ((-1) ** column)
+            return value
+        return matrix.get(0, 0) * matrix.get(1, 1) - \
+               matrix.get(1, 0) * matrix.get(0, 1)
 
 
 class PCA:
@@ -300,6 +327,7 @@ class PCA:
         """
         self.data = Matrix(data)
         self.principle_components = principle_components
+
 
 if __name__ == "__main__":
     doctest.testmod()
