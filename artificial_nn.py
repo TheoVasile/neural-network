@@ -191,6 +191,8 @@ class Matrix:
         self.rows = rows
         self.columns = [[row[column] for row in rows] for column in
                         range(len(rows[0]))]
+        self.width = len(self.rows[0])
+        self.height = len(self.columns[0])
 
     def insert(self, row: List[Any]) -> None:
         """
@@ -245,7 +247,7 @@ class Matrix:
         >>> matrix.mean(0)
         2.0
         """
-        return sum(self.columns[column]) / len(self.columns[column])
+        return sum(self.columns[column]) / self.height
 
     def get(self, column: int, row: int) -> float:
         """
@@ -267,14 +269,14 @@ class Matrix:
         [[0.25, 1.0, -0.5], [1.0, 4.0, -2.0], [-0.5, -2.0, 1.0]]
         """
         covariance_matrix = Matrix([[0] * len(self.rows[0])])
-        for y in range(len(self.rows[0])):
+        for y in range(self.width):
             row = []
-            for x in range(len(self.rows[0])):
+            for x in range(self.width):
                 covariance_ = 0
-                for i in range(len(self.columns[0])):
+                for i in range(self.height):
                     covariance_ += (self.get(x, i) - self.mean(x)) * (
                             self.get(y, i) - self.mean(y))
-                covariance_ /= len(self.columns) - 1
+                covariance_ /= self.height
                 row.append(covariance_)
             covariance_matrix.insert(row)
         covariance_matrix.remove_row(0)
