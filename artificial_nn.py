@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple
 import random
 import math
+import doctest
 
 VARIABILITY = 2
 
@@ -8,9 +9,9 @@ def sigmoid(z):
     """
     Returns the input number z after performing a sigmoid operation on it
     >>> sigmoid(0)
-    0.707
+    0.7071067811865476
     >>> sigmoid(2)
-    0.938
+    0.9385078997951388
     """
     return math.sqrt(1 / (1 + math.e ** (-z)))
 
@@ -188,14 +189,67 @@ class Matrix:
         self.columns = [[row[column] for row in data] for column in range(len(data[0]))]
 
     def insert(self, row: List[float]):
+        """
+        Insert a new <row> into the matrix
+
+        >>> matrix = Matrix([[1, 2], [5, 1]])
+        >>> matrix.insert([3, 4])
+        >>> matrix.columns
+        [[1, 5, 3], [2, 1, 4]]
+        >>> matrix.rows
+        [[1, 2], [5, 1], [3, 4]]
+        """
         self.rows.append(row)
         for column in range(len(row)):
             self.columns[column].append(row[column])
 
+    def remove_row(self, row: int):
+        """
+        Remove a <row> from the matrix
+
+        >>> matrix = Matrix([[1, 2], [5, 1], [3, 4]])
+        >>> matrix.remove_row(1)
+        >>> matrix.columns
+        [[1, 3], [2, 4]]
+        >>> matrix.rows
+        [[1, 2], [3, 4]]
+        """
+        for column in range(len(self.columns)):
+            self.columns[column].pop(row)
+        self.rows.pop(row)
+    def remove_column(self, column: int):
+        """
+        Remove a <row> from the matrix
+
+        >>> matrix = Matrix([[1, 2], [5, 1], [3, 4]])
+        >>> matrix.remove_column(1)
+        >>> matrix.columns
+        [[1, 5, 3]]
+        >>> matrix.rows
+        [[1], [5], [3]]
+        """
+        for row in range(len(self.rows)):
+            self.rows[row].pop(column)
+        self.columns.pop(column)
+
     def mean(self, column: int) -> float:
+        """
+        Return the mean of a <column> in the matrix
+
+        >>> matrix = Matrix([[1, 2], [3, 4]])
+        >>> matrix.mean(0)
+        2.0
+        """
         return sum(self.columns[column]) / len(self.columns[column])
 
     def get(self, column: int, row: int) -> float:
+        """
+        Return the value at a certain <row> and <column> in the matrix
+
+        >>> matrix = Matrix([[1, 2], [3, 4]])
+        >>> matrix.get(0, 1)
+        3
+        """
         return self.rows[row][column]
 
 
@@ -225,16 +279,26 @@ class PCA:
     def covariance(self, matrix: Matrix) -> Matrix:
         """
         Returns the covariance matrix of a data set
+
+        >>> matrix = Matrix([[1, 2, 3], [2, 6, 1]])
+        >>> pca = PCA([[]], 0)
+        >>> cov = pca.covariance(matrix)
+        >>> cov.rows
+        [[0.25, 1.0, -0.5], [1.0, 4.0, -2.0], [-0.5, -2.0, 1.0]]
         """
-        covariance_matrix = Matrix([[]])
-        for y in range(len(matrix.rows)):
+        covariance_matrix = Matrix([[0] * len(matrix.rows[0])])
+        for y in range(len(matrix.rows[0])):
             row = []
-            for x in range(len(matrix.rows)):
+            for x in range(len(matrix.rows[0])):
                 covariance_ = 0
-                for i in range(len(matrix.columns)):
+                for i in range(len(matrix.columns[0])):
                     covariance_ += (matrix.get(x, i) - matrix.mean(x)) * (matrix.get(y, i) - matrix.mean(y))
                 covariance_ /= len(matrix.columns) - 1
                 row.append(covariance_)
             covariance_matrix.insert(row)
+        covariance_matrix.remove_row(0)
 
         return covariance_matrix
+
+if __name__ == "__main__":
+    doctest.testmod()
