@@ -306,6 +306,39 @@ class Matrix:
         return matrix.get(0, 0) * matrix.get(1, 1) - \
                matrix.get(1, 0) * matrix.get(0, 1)
 
+    def nullspace(self):
+        """
+        Return the nullspace vector of the matrix
+
+        >>> matrix = Matrix([[-1, 1, 2, 4], [2, 0, 1, -7]])
+        >>> matrix.nullspace()
+        [-x2/2 + 7*x3/2, -5*x2/2 - x3/2, x2, x3]
+
+        >>> matrix = Matrix([[1, 2, 0], [2, 4, 0], [3, 6, 1]])
+        >>> matrix.nullspace()
+        [-2, 1, 0]
+        """
+        equations = []
+        for row in self.rows:
+            for column in range(self.width):
+                var = sympy.Symbol(f'x{column}')
+                row[column] *= var
+            equations.append(sum(row))
+        solution = sympy.solve(equations)
+        independant = 1
+        if len(solution.keys()) >= self.width - 1:
+            for i in range(self.width):
+                if sympy.Symbol(f"x{i}") not in solution.keys():
+                    independant = sympy.Symbol(f"x{i}")
+        vector = []
+        for i in range(self.width):
+            var = sympy.Symbol(f'x{i}')
+            if var in list(solution.keys()):
+                vector.append(solution[var]/independant)
+            else:
+                vector.append(var/independant)
+        return vector
+
 
 class PCA:
     """
